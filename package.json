@@ -1,0 +1,25 @@
+{
+  "name": "com.chrisash.eui.datasources",
+  "version": "0.1.1",
+  "displayName": "EasyUI DataSources Module",
+  "description": "Datasource modules for EUI - Allows you to import+display data from files + urls.",
+  "unity": "2020.1",
+  "unityRelease": "0b5",
+  "dependencies": { "com.chrisash.eui": "0.1.1" },
+ "keywords": [
+    "ui",
+    "editor"
+  ],
+  "author": {
+    "name": "Chris Ashtear",
+    "email": "chrisashtear@gmail.com",
+    "url": "https://chrisashtear.itch.io"
+  },
+  "samples": [
+        {
+            "displayName": "UI Components",
+            "description": "Contains sample prefab menu components such as buttons",
+            "path": "Samples~/"
+        }
+    ]
+}

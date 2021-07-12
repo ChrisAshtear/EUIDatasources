@@ -1,0 +1,20 @@
+{
+    "name": "com.chrisash.eui.datasources.editor",
+    "rootNamespace": "",
+    "references": [
+        "com.chrisash.eui.datasources",
+        "com.chrisash.eui",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
