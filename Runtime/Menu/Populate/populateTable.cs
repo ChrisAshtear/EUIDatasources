@@ -33,16 +33,16 @@ public class populateTable : populateData, I_ItemMenu
         bool selected = false;
 
         Clear();
-        Debug.Log(props);
+
         DataSource d;
         string primaryKey = "";
         {
             primaryKey = props?.data?.primaryKey;
             d = props?.data;
         }
-        Debug.Log(props);
+
         if (d == null) { return; }
-        Debug.Log(props);
+
         bool selectedAnItem = false;
         List<string> keys = d.getFieldFromAllItems(primaryKey);
 
@@ -62,6 +62,18 @@ public class populateTable : populateData, I_ItemMenu
         }
 
         bool odd = true;
+        string[] fieldArr = fieldList.Split(',');
+        float[] fieldWidth = new float[fieldArr.Length];
+
+        DataLibrary headerData = new DataLibrary();
+        if (showHeader)
+        {
+            foreach (string field in fieldArr)
+            {
+                headerData.SetValue(field, field.ToUpper());
+            }
+            keys.Insert(0, "*header*");
+        }
 
         foreach (string key in keys)
         {
@@ -82,7 +94,11 @@ public class populateTable : populateData, I_ItemMenu
             obj.name = key;
             UIRowListItem listItem = obj.GetComponent<UIRowListItem>();
             d.AddListener(key, listItem.SourceUpdate);
-            DataLibrary dat = new DataLibrary(props.data.getObjFromItemID(key));
+            DataLibrary dat;
+
+            if(key == "*header*") { dat = headerData; }
+            else { dat = new DataLibrary(props.data.getObjFromItemID(key)); }
+            
 
             if (odd || !striping) { dat.SetValue("bgColor", stripeColorOdd); }
             else { dat.SetValue("bgColor", stripeColorEven); }
