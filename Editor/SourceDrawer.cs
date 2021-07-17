@@ -61,8 +61,15 @@ public class SourceDrawer : PropertyDrawer
             {
                 index = 0;
             }
-            property.FindPropertyRelative("tableName").stringValue = tables[index];
-            property.FindPropertyRelative("ID").stringValue = obj.primaryKey;
+            if(tables.Length>0)
+            {
+                property.FindPropertyRelative("tableName").stringValue = tables[index];
+                property.FindPropertyRelative("ID").stringValue = obj.primaryKey;
+            }
+            else
+            {
+                EditorGUI.LabelField(tableRect, "No Tables");
+            }
         }
 
         // Set indent back to what it was

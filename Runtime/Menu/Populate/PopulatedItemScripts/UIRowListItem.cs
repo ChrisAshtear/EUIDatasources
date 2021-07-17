@@ -12,10 +12,22 @@ public class UIRowListItem : UIButtonListItem
     public GameObject RowCellPrefab;
     public string fieldList;
     private float width;
+    private float[] fieldSizePct;
+    private float lastWidth;
 
-    public void SetDataCustomFields(IDataLibrary data, string fields, bool isHeader = false)
+    public void SetDataCustomFields(IDataLibrary data, string fields, int[] fieldSize, bool isHeader = false)
     {
         this.fieldList = fields;
+
+        int totalsize = 0;
+        foreach (int f in fieldSize) { totalsize += f; }
+        fieldSizePct = new float[fieldSize.Length];
+        for(int i = 0; i < fieldSizePct.Length;i++)
+        {
+            fieldSizePct[i] = ((float)fieldSize[i] / totalsize);
+        }
+
+
         SetData(data);
     }
     //TODO: need to change bgcolor + txtcolor automatically 
@@ -27,11 +39,13 @@ public class UIRowListItem : UIButtonListItem
         width = parRect.rect.width;
         
         string[] fields = fieldList.Split(',');
-        float widthPer = r.rect.width / (fields.Length-1);
-        int i = 0;
-        foreach (string field in fields)
+        float xOffset = 0;
+
+        for (int i = 0;i<fields.Length; i++)
         {
-            IData dat = data.GetValue(field);
+            float widthPer = (r.rect.width * fieldSizePct[i]);
+            float widthPerOld = r.rect.width / (fields.Length - 1);
+            IData dat = data.GetValue(fields[i]);
             if (dat.Data != null)
             {
                 switch(dat.Type)
@@ -41,14 +55,20 @@ public class UIRowListItem : UIButtonListItem
                         TextMeshProUGUI text = g.GetComponent<TextMeshProUGUI>();
                         text.text = dat.DisplayValue;
                         RectTransform rect = g.GetComponent<RectTransform>();
-                        rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left,i*widthPer,widthPer);
+                        rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left,xOffset,widthPer);
                         rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top,0, r.rect.height /2);
                         break;
                 }
             }
-            i++;
+            xOffset += widthPer;
         }
         //create components.
     }
 
+    void Update()
+    {
+        RectTransform r = GetComponent<RectTransform>();
+        Debug.Log(r.rect.width.ToString());
+    }
+    
 }

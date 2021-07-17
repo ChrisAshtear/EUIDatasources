@@ -47,11 +47,16 @@ public class UIButtonListItem : MonoBehaviour
 
     public void SetData(IDataLibrary data)
     {
-        PreDataUpdate(data);
-        UIDataController control = GetComponent<UIDataController>();
-        dataKey = data.GetValue("DefinitionID").ToString();
+        Invoke("SendDataDelayed", 0.1f);
         storedData = data;
-        control.RefreshData(data);
+    }
+
+    public void SendDataDelayed()
+    {
+        PreDataUpdate(storedData);
+        UIDataController control = GetComponent<UIDataController>();
+        dataKey = storedData.GetValue("DefinitionID").ToString();
+        control.RefreshData(storedData);
     }
 
     public virtual void PreDataUpdate(IDataLibrary data)
@@ -67,4 +72,5 @@ public class UIButtonListItem : MonoBehaviour
     {
         button.interactable = isInteractable;
     }
+
 }

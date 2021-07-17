@@ -50,6 +50,10 @@ public class JSONDatabaseSource : DatabaseSource,IRemoteSource
         }
     }
 
+    //so the datasource should request new data if it gets a request to fill X entries that it doesnt have in its cache.
+    //additionally, should the datasource cache data it already requested, and at what point should it refresh?
+    //we need 1 table that requests 8 rows & another that requests 20. These logically should use the same datasource.
+
     private void OnEnable()
     {
         SetupArguments();

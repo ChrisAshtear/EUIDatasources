@@ -40,6 +40,7 @@ public class DataSource
     public Action<DataSource> selectChanged;
     public Sprite spritesheet;
 
+    private List<string> entriesIndex;
     public DataSource()
     {
         //condition = maxCond;
@@ -112,7 +113,9 @@ public class DataSource
 
     protected void doOnDataReady()
     {
-        if(onDataReady != null)
+        entriesIndex = getFieldFromAllItems(primaryKey);
+
+        if (onDataReady != null)
         {
             onDataReady();
         }
@@ -307,6 +310,36 @@ public class DataSource
 
                 allVals.Add(val.ToString());
                 // do something with entry.Value or entry.Key
+            }
+            return allVals;
+        }
+        return new List<string>();
+    }
+
+    /// <summary>
+    /// Gets a list of values from a field from items in the datasource.
+    /// </summary>
+    /// <param name="field">field name</param>
+    /// <param name="results">#of results. -1 is all</param>
+    /// <param name="offset">how many results to skip</param>
+    /// <returns>a string list of values</returns>
+    public virtual List<string> GetFieldFromItems(string field,int results=-1,int offset=0)
+    {
+        //primary keys should be in a list.
+        if (dataReady && data != null)
+        {
+            List<string> allVals = new List<string>();
+            if (results == -1) { results = data.Values.Count; }
+            else { results += offset; }
+            for(int i = offset;i<results;i++)
+            {
+                string key = entriesIndex[i];
+                if(field == primaryKey) { allVals.Add(entriesIndex[i]); }
+                else
+                {
+                    bool found = data[key].TryGetValue(field, out object value);
+                    allVals.Add(value?.ToString());
+                }
             }
             return allVals;
         }

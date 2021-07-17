@@ -12,6 +12,7 @@ using System.Linq;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
+//TODO: this should be sortable. the cell containing each header column should have a button added to it to sort the contents.
 public class populateTable : populateData, I_ItemMenu
 {
     
@@ -24,6 +25,7 @@ public class populateTable : populateData, I_ItemMenu
     public Color headerColor;
     [Tooltip("Comma seperated list of fields to display, in that order.")]
     public string fieldList;
+    private int[] fieldWidth;
 
     private Dictionary<string, object> preservedData = new Dictionary<string, object>();
 
@@ -62,8 +64,22 @@ public class populateTable : populateData, I_ItemMenu
         }
 
         bool odd = true;
+
         string[] fieldArr = fieldList.Split(',');
-        float[] fieldWidth = new float[fieldArr.Length];
+        //if (fieldWidth == null)
+        {
+            
+            fieldWidth = new int[fieldArr.Length];
+
+            DataLibrary sample = new DataLibrary(props.data.getObjFromItemID(keys[0]));
+            for (int i = 0; i < fieldArr.Length; i++)
+            {
+                string val = sample.GetTxtValue(fieldArr[i]);
+                fieldWidth[i] = val.Length;
+                if (fieldWidth[i] < 4) { fieldWidth[i] = 4; }
+            }
+        }
+        
 
         DataLibrary headerData = new DataLibrary();
         if (showHeader)
@@ -107,7 +123,7 @@ public class populateTable : populateData, I_ItemMenu
             {
                 dat.SetValue(de.Key, de.Value);
             }
-            listItem.SetDataCustomFields(dat,fieldList);
+            listItem.SetDataCustomFields(dat,fieldList,fieldWidth);
             listItem.Click = OnClick;
             listItem.source = props.data;
             if (!selectedAnItem)
