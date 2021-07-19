@@ -11,7 +11,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Threading.Tasks;
 using System.IO;
-
+//TODO: there should be a small add on script that extends the db source - so you can adjust a JSON/XML loader to adjust for how your API works. maybe an intermediary that handles requests for new information.
 public interface IRemoteSource
 {
     public void SetArgument(string field, string value,bool reload);
@@ -32,14 +32,19 @@ public class JSONDatabaseSource : DatabaseSource,IRemoteSource
 {
     //if we can use a text asset here & also support an assetbundle/web request that would be ideal.
     public TextAsset JSON_file; // load from here if loadFromURL false
-    public string URL; // load from here if loadFromURL true
+    public string rootURL;// the root web address.
+    public string URL; // the file to load - load from here if loadFromURL true
     public Dictionary<string, string> remoteArguments = new Dictionary<string, string>();
     public bool loadFromURL = false;
+    public NetRequestType webRequestType = NetRequestType.GET;
+
     HttpWebRequest webRequest;
     public List<FieldPair> defaultRemoteArguments;
     //Props
     public int remoteSetIncremenAmt = 1;
     public string remotePageFieldName;
+
+    private bool appendLoad = false;
 
     public void SetupArguments()
     {
@@ -74,21 +79,54 @@ public class JSONDatabaseSource : DatabaseSource,IRemoteSource
         {
             if (obj.Value.Type == JTokenType.Array)
             {
-                DataSource table = new DataSource(obj.Name, primaryKey);
                 JArray arr = (JArray)obj.Value;
-                if(tables.ContainsKey(obj.Name))
+                
+                DataSource table = new DataSource(obj.Name, primaryKey);
+                
+                if (tables.ContainsKey(obj.Name))
                 {
-                    tables.Remove(obj.Name);
+                    if(appendLoad)
+                    {
+                        table = tables[obj.Name];
+                    }
+                    else
+                    {
+                        tables.Remove(obj.Name);
+                        tables.Add(obj.Name, table);
+                    }
                 }
-                tables.Add(obj.Name, table);
+                else { tables.Add(obj.Name, table); }
+                
                 foreach (JToken t in arr.Children())
                 {
                     Dictionary<string, object> row = JsonConvert.DeserializeObject<Dictionary<string, object>>(t.ToString());
+                    //TODO:the dict shouldnt be accessed directly.
                     table.data.Add(row[primaryKey].ToString(), row);
                 }
                 table.setReady();
             }
+            else
+            {
+                tables.TryGetValue("root", out DataSource rootTable);
+                if (rootTable == null)
+                {
+                    DataSource table = new DataSource("root", primaryKey);
+                    tables.Add("root", table);
+                    rootTable = table;
+                }
+                if(obj.Value.Type == JTokenType.Object)
+                {
+                    Dictionary<string, object> jobj = JsonConvert.DeserializeObject<Dictionary<string, object>>(obj.Value.ToString());
+                    rootTable.SetAttribute(obj.Name, jobj);
+                }
+                else
+                {
+                    rootTable.SetAttribute(obj.Name, obj.Value);
+                }
+                
+                         
 
+            }
         }
 
         if (tables.Count > 0)
@@ -96,14 +134,19 @@ public class JSONDatabaseSource : DatabaseSource,IRemoteSource
             dataReady = true;
         }
         doOnDataReady();
-    }
+     }
 
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public override void LoadData()
+    protected override bool LoadData()
     {
         if (remoteArguments == null) { SetupArguments(); }
-        //SetArgument(arg1Name, arg1Val, false);
-        tables = new Dictionary<string, DataSource>();
+        if (!appendLoad) 
+        { 
+            tables = new Dictionary<string, DataSource>(); 
+            DataSource table = new DataSource("root", primaryKey);
+            tables.Add("root", table);
+        }
+        
         displayCodes = new Dictionary<string, string>();
         dataReady = false;
 
@@ -113,13 +156,17 @@ public class JSONDatabaseSource : DatabaseSource,IRemoteSource
         {
             if (loadFromURL)
             {
-                string getDataUrl = "https://us-central1-warscrap-c63.cloudfunctions.net/api/" + URL + NetUtil.DictionaryToGetString(remoteArguments) ;
-                NetUtil.DoWebRequest(getDataUrl, LoadFromString);
+                appendLoad = true;
+                string getDataUrl = rootURL + URL;
+                NetUtil.DoWebRequest(getDataUrl, remoteArguments,webRequestType , LoadFromString);
+                return false;
             }
             else
             {
                 LoadFromString(JSON_file.text);
+                return true;
             }
+            
         }
         catch (Exception e)
         {
@@ -131,7 +178,7 @@ public class JSONDatabaseSource : DatabaseSource,IRemoteSource
             {
                 loadStatus = e.Message;
             }
-
+            return false;
         }
     }
 
@@ -155,17 +202,36 @@ public class JSONDatabaseSource : DatabaseSource,IRemoteSource
     {
         remoteArguments.TryGetValue(remotePageFieldName, out string pageVal);
         int curPage = int.Parse(pageVal);
-        curPage += remoteSetIncremenAmt * increment;
+        curPage += increment;
         SetArgument(remotePageFieldName, curPage.ToString());
     }
 
-    public override void RequestNextSet()
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="tableName"></param>
+    /// <param name="amtOfRecords"></param>
+    /// <param name="recordOffset"></param>
+    /// <returns>if the data that was requested is currently cached.</returns>
+    public override int RequestNextSet(string tableName,int amtOfRecords, int recordOffset)
     {
-        RequestNewData(1);
-    }
+        DataSource d = getTable(tableName);
+        int numEntries = d.data.Values.Count;
 
-    public override void RequestPrevSet()
-    {
-        RequestNewData(-1);
+        if(recordOffset+amtOfRecords > numEntries)
+        {
+            int newRecordsNeeded = (recordOffset + amtOfRecords) - numEntries;
+            RequestNewData(newRecordsNeeded);
+            return newRecordsNeeded;
+        }
+        else
+        {
+            return 0;
+        }
     }
+    /*
+    public override void RequestPrevSet(int amtOfRecords, int recordOffset)
+    {
+        RequestNewData(-recordOffset);
+    }*/
 }

@@ -70,6 +70,7 @@ public class populateBase : MonoBehaviour
 
     public void Clear()
     {
+#if UNITY_EDITOR
         if (Application.isEditor)
         {
             foreach (Transform child in layoutGroup.transform)
@@ -85,6 +86,7 @@ public class populateBase : MonoBehaviour
             }
         }
         else
+#endif
         {
             GUIutil.clearChildren(layoutGroup.transform);
         }

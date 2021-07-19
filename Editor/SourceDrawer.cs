@@ -21,7 +21,7 @@ public class SourceDrawer : PropertyDrawer
     List<string> allFields = new List<string>();
     List<string> allTables = new List<string>();
     string currentData = "null";
-    public int index = 0;
+    public int index;
     public string[] options = new string[] { "Cube", "Sphere", "Plane" };
 
     public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -56,13 +56,21 @@ public class SourceDrawer : PropertyDrawer
         if (obj != null)
         {
             string[] tables = obj.getTables().ToArray();
-            index = EditorGUI.Popup(tableRect, index, tables.ToArray());
-            if (index >= tables.Length)
+            string curTableName = property.FindPropertyRelative("tableName").stringValue;
+            for(int i=0;i < tables.Length;i++)
             {
-                index = 0;
+                if(tables[i] == curTableName) { index = i; }
             }
+
             if(tables.Length>0)
             {
+                index = EditorGUI.Popup(tableRect, index, tables.ToArray());
+
+                if (index >= tables.Length && obj.isDataReady())
+                {
+                    index = 0;
+                }
+
                 property.FindPropertyRelative("tableName").stringValue = tables[index];
                 property.FindPropertyRelative("ID").stringValue = obj.primaryKey;
             }

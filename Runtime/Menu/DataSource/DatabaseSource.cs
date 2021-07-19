@@ -59,7 +59,7 @@ public class DatabaseSource : ScriptableObject
     {
         //if(tables.Count ==0)
         {
-            LoadData();
+            DoLoadData(true);
         }
     }
 
@@ -156,8 +156,19 @@ public class DatabaseSource : ScriptableObject
         return dataReady;
     }
 
-    public virtual void LoadData()
+    public void DoLoadData(bool clearTables = false)
     {
+        if (clearTables) { tables = new Dictionary<string, DataSource>(); }
+        bool loaded = LoadData();
+        if(loaded)
+        {
+            doOnDataReady();
+        }
+    }
+
+    protected virtual bool LoadData()
+    {
+        return true;
     }
 
     protected void doOnDataReady()
@@ -236,13 +247,13 @@ public class DatabaseSource : ScriptableObject
     }
 
     //request next data set
-    public virtual void RequestNextSet()
+    public virtual int RequestNextSet(string tableName, int amtOfRecords, int recordOffset)
     {
-
+        return 0;
     }
 
-    public virtual void RequestPrevSet()
+    /*public virtual void RequestPrevSet(int amtOfRecords, int recordOffset)
     {
 
-    }
+    }*/
 }

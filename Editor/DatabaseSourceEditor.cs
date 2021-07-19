@@ -41,7 +41,7 @@ public class DatabaseSourceEditor : Editor
 
         if (GUILayout.Button("Load"))
         {
-            dbsource.LoadData();
+            dbsource.DoLoadData(true);
         }
         EditorUtility.SetDirty(dbsource);
     }

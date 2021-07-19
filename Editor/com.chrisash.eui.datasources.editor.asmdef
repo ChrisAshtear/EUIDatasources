@@ -4,7 +4,8 @@
     "references": [
         "com.chrisash.eui.datasources",
         "com.chrisash.eui",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "com.chrisash.eui.editor"
     ],
     "includePlatforms": [
         "Editor"

@@ -40,6 +40,8 @@ public class DataSource
     public Action<DataSource> selectChanged;
     public Sprite spritesheet;
 
+    public DataLibrary attributes;
+
     private List<string> entriesIndex;
     public DataSource()
     {
@@ -51,6 +53,22 @@ public class DataSource
         primaryKey = key;
         this.name = name;
         data = new Dictionary<string, Dictionary<string, object>>();
+        attributes = new DataLibrary(); 
+    }
+
+    public IData GetAttribute(string fieldName)
+    {
+        return attributes.GetValue(fieldName);
+    }
+
+    public void SetAttribute(string fieldName, object value)
+    {
+        attributes.SetValue(fieldName, value);
+    }
+
+    public DataLibrary GetAllAttributes()
+    {
+        return attributes;
     }
 
     private void OnDestroy()
@@ -107,10 +125,6 @@ public class DataSource
         return dataReady;
     }
 
-    public virtual void LoadData()
-    {
-    }
-
     protected void doOnDataReady()
     {
         entriesIndex = getFieldFromAllItems(primaryKey);
@@ -132,6 +146,7 @@ public class DataSource
     public void setReady()
     {
         dataReady = true;
+        doOnDataReady();
     }
 
     public virtual string getRandomFieldVal(string fieldName)
@@ -329,6 +344,7 @@ public class DataSource
         if (dataReady && data != null)
         {
             List<string> allVals = new List<string>();
+            //TODO: if remote DB, check if we can get more results
             if (results == -1) { results = data.Values.Count; }
             else { results += offset; }
             for(int i = offset;i<results;i++)

@@ -13,6 +13,7 @@ using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 //TODO: this should be sortable. the cell containing each header column should have a button added to it to sort the contents.
+//TODO: utility to clear all populated items when saving scene
 public class populateTable : populateData, I_ItemMenu
 {
     
@@ -26,6 +27,9 @@ public class populateTable : populateData, I_ItemMenu
     [Tooltip("Comma seperated list of fields to display, in that order.")]
     public string fieldList;
     private int[] fieldWidth;
+    private int resultCount = 0;
+
+    private List<UIRowListItem> allRows = new List<UIRowListItem>();
 
     private Dictionary<string, object> preservedData = new Dictionary<string, object>();
 
@@ -34,7 +38,14 @@ public class populateTable : populateData, I_ItemMenu
         Debug.Log(props);
         bool selected = false;
 
-        Clear();
+        bool createPrefabs = true;
+
+        if(allRows.Count < 1 || allRows.Count != props.results+1)
+        {
+            Clear();
+            allRows = new List<UIRowListItem>();
+        }
+        else { createPrefabs = false; }
 
         DataSource d;
         string primaryKey = "";
@@ -46,8 +57,8 @@ public class populateTable : populateData, I_ItemMenu
         if (d == null) { return; }
 
         bool selectedAnItem = false;
-        List<string> keys = d.getFieldFromAllItems(primaryKey);
-
+        List<string> keys = d.GetFieldFromItems(primaryKey,props.results,resultCount);
+        if(keys.Count == 0) { return; }
         IEnumerable<SourceFilter> allFilters = filters.Concat(permanentFilter);
 
         if (d.displayCode != null)
@@ -91,6 +102,7 @@ public class populateTable : populateData, I_ItemMenu
             keys.Insert(0, "*header*");
         }
 
+        int row = 0;
         foreach (string key in keys)
         {
             bool filtered = false;
@@ -105,27 +117,47 @@ public class populateTable : populateData, I_ItemMenu
             }
             if (filtered) { continue; }
 
-            GameObject obj = Instantiate(prefab, layoutGroup.transform);
-            obj.transform.parent = layoutGroup.transform;
-            obj.name = key;
-            UIRowListItem listItem = obj.GetComponent<UIRowListItem>();
-            d.AddListener(key, listItem.SourceUpdate);
+            GameObject obj;
+            UIRowListItem listItem;
             DataLibrary dat;
 
-            if(key == "*header*") { dat = headerData; }
+            if (key == "*header*") { dat = headerData; }
             else { dat = new DataLibrary(props.data.getObjFromItemID(key)); }
+
+
+            if (createPrefabs) 
+            { 
+                obj = Instantiate(prefab, layoutGroup.transform);
+                obj.transform.parent = layoutGroup.transform;
+                
+                listItem = obj.GetComponent<UIRowListItem>();
+                allRows.Add(listItem);
+                if (odd || !striping) { dat.SetValue("bgColor", stripeColorOdd); }
+                else { dat.SetValue("bgColor", stripeColorEven); }
+            }
+            else 
+            { 
+                obj = allRows[row].gameObject;
+                listItem = allRows[row];
+                
+            }
+
+            listItem.SetDataCustomFields(dat, fieldList, fieldWidth);
+            listItem.Click = OnClick;
+            listItem.source = props.data;
+
+
+            obj.name = key;
+            d.AddListener(key, listItem.SourceUpdate);
             
 
-            if (odd || !striping) { dat.SetValue("bgColor", stripeColorOdd); }
-            else { dat.SetValue("bgColor", stripeColorEven); }
+            
 
             foreach (KeyValuePair<string, object> de in preservedData)
             {
                 dat.SetValue(de.Key, de.Value);
             }
-            listItem.SetDataCustomFields(dat,fieldList,fieldWidth);
-            listItem.Click = OnClick;
-            listItem.source = props.data;
+            
             if (!selectedAnItem)
             {
                 if (selectDefaultItem && (defaultSelection == -1 || key == defaultSelection.ToString()))
@@ -135,17 +167,33 @@ public class populateTable : populateData, I_ItemMenu
                 }
             }
             odd = !odd;
+            row++;
         }
 
     }
 
     public void NextPage()
     {
-        props.dataS.db.RequestNextSet();
+        resultCount += props.results;
+        if(!props.dataS.db.isRemote)
+        {
+            Populate();
+        }
+        else
+        {
+            int newRecordsNeeded = props.dataS.db.RequestNextSet(props.dataS.tableName, props.results, resultCount);
+            if (newRecordsNeeded == 0) { Populate(); }
+            else { /*resultCount -= newRecordsNeeded; */}
+        }
+        
+        //Remote - if not cached
+        
     }
 
     public void PrevPage()
     {
-        props.dataS.db.RequestPrevSet();
+        resultCount -= props.results;
+        if(resultCount < 0) { resultCount = 0; }
+        Populate();
     }
 }

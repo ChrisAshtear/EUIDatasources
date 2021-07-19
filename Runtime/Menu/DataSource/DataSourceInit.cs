@@ -15,7 +15,7 @@ public static class DataSourceInit
         sources = Resources.LoadAll<DatabaseSource>("");
         foreach(DatabaseSource s in sources)
         {
-            s.LoadData();
+            s.DoLoadData(true);
         }
         
     }

@@ -113,7 +113,7 @@ public class DataProps : BaseProps
     public UnityEvent ev;
     public UnityEvent<IDataLibrary> evData;
 
-    public string tableName;
+    public int results = 20;
     [HideInInspector]
     public DataSource data { get { return dataS.db.getTable(dataS.tableName); } }
     public SourceProps dataS;
@@ -214,7 +214,7 @@ public class populateData : populateBase, I_ItemMenu
 
     public void setTable(string t)
     {
-        props.tableName = t;
+        props.dataS.tableName = t;
         Clear();
         Invoke("Populate", 0.2f);
     }

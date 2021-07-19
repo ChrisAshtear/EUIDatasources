@@ -94,8 +94,26 @@ public class DataLibrary : IDataLibrary,IDataLibraryReadOnly, IEnumerator<IData>
 
     public IData GetValue(string valueName)
     {
-        Values.TryGetValue(valueName.ToLower(), out DataObject val);
-        return (IData)val ?? (IData)new DataObject("none",null);
+        bool subVal = false;
+        string fieldName = valueName;
+        string subField = "";
+        if (valueName.Contains('.')) 
+        { 
+            subVal = true;
+            fieldName = valueName.Split('.')[0];
+            subField = valueName.Split('.')[1];
+        }
+
+        Values.TryGetValue(fieldName.ToLower(), out DataObject val);
+
+        if (val != null && subVal)
+        {
+            Dictionary<string,object> props = (Dictionary<string,object>)val.Data;
+            props.TryGetValue(subField, out object subRetVal);
+            DataObject d = new DataObject(subField, subRetVal);
+            return (IData)d;
+        }
+        else { return (IData)val ?? (IData)new DataObject("none", null); }
     }
 
     public void RemoveListener(string valueName, Action<IData> callback)

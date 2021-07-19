@@ -3,6 +3,8 @@ using TMPro;
 using UnityEngine.UI;
 using System;
 using System.Collections;
+using System.Collections.Generic;
+
 [RequireComponent(typeof(UIDataController))]
 public class UIRowListItem : UIButtonListItem
 {
@@ -14,6 +16,9 @@ public class UIRowListItem : UIButtonListItem
     private float width;
     private float[] fieldSizePct;
     private float lastWidth;
+
+    private bool fieldsCreated = false;
+    private Dictionary<string, GameObject> columns = new Dictionary<string, GameObject>();
 
     public void SetDataCustomFields(IDataLibrary data, string fields, int[] fieldSize, bool isHeader = false)
     {
@@ -40,13 +45,13 @@ public class UIRowListItem : UIButtonListItem
         
         string[] fields = fieldList.Split(',');
         float xOffset = 0;
-
+        if(columns.Count> 0) { fieldsCreated = true; }
         for (int i = 0;i<fields.Length; i++)
         {
             float widthPer = (r.rect.width * fieldSizePct[i]);
             float widthPerOld = r.rect.width / (fields.Length - 1);
             IData dat = data.GetValue(fields[i]);
-            if (dat.Data != null)
+            if (dat.Data != null&& !fieldsCreated)
             {
                 switch(dat.Type)
                 {
@@ -56,7 +61,19 @@ public class UIRowListItem : UIButtonListItem
                         text.text = dat.DisplayValue;
                         RectTransform rect = g.GetComponent<RectTransform>();
                         rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Left,xOffset,widthPer);
-                        rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top,0, r.rect.height /2);
+                        rect.SetInsetAndSizeFromParentEdge(RectTransform.Edge.Top,0, r.rect.height);
+                        columns.Add(fields[i], g);
+                        break;
+                }
+            }
+            else
+            {
+                switch (dat.Type)
+                {
+                    case DataLibSupportedTypes.text:
+                        columns.TryGetValue(fields[i], out GameObject g);
+                        TextMeshProUGUI text = g.GetComponent<TextMeshProUGUI>();
+                        text.text = dat.DisplayValue;
                         break;
                 }
             }
@@ -68,7 +85,7 @@ public class UIRowListItem : UIButtonListItem
     void Update()
     {
         RectTransform r = GetComponent<RectTransform>();
-        Debug.Log(r.rect.width.ToString());
+        //Debug.Log(r.rect.width.ToString());
     }
     
 }

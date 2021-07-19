@@ -19,7 +19,7 @@ public class XMLDatabaseSource : DatabaseSource
     }
 
     //[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    public override void LoadData()
+    protected override bool LoadData()
     {
         tables = new Dictionary<string, DataSource>();
         displayCodes = new Dictionary<string, string>();
@@ -95,7 +95,7 @@ public class XMLDatabaseSource : DatabaseSource
                 dataReady = true;
 
             }
-            doOnDataReady();
+            return true;
         }
         catch(Exception e)
         {
@@ -107,7 +107,7 @@ public class XMLDatabaseSource : DatabaseSource
             {
                 loadStatus = e.Message;
             }
-
+            return false;
         }
     }
 
