@@ -1,11 +1,11 @@
 {
   "name": "com.chrisash.eui.datasources",
-  "version": "0.1.7",
+  "version": "0.1.6",
   "displayName": "EasyUI DataSources Module",
   "description": "Datasource modules for EUI - Allows you to import+display data from files + urls.",
   "unity": "2020.1",
   "unityRelease": "0b5",
-  "dependencies": { "com.chrisash.eui": "0.1.7" },
+  "dependencies": { "com.chrisash.eui": "0.1.6" },
  "keywords": [
     "ui",
     "editor"
@@ -21,5 +21,8 @@
             "description": "Contains sample prefab menu components such as buttons",
             "path": "Samples~/"
         }
-    ]
+    ],
+  "scripts": {
+    "version": "auto-changelog -p && git add CHANGELOG.md"
+  }
 }
