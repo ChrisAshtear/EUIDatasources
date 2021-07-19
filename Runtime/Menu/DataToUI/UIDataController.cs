@@ -27,13 +27,9 @@ public class UIDataController : MonoBehaviour
             IData subType = null;
             //Debug.Log("UITag:" + tag.name);
             //Debug.Log("UITagType:" + tag.dataType.ToString());
-            if(tag.subTypeName != "")
-            {
-                subType = data.GetValue(tag.subTypeName);
-            }
             if (tag.dataType == UIDataType.DisableButtonIfTrue && dat.Data==null) { dat.Data = ""; }
             if (tag.dataType == UIDataType.ShowIfTrue && dat.Data==null) { dat.Data = "false"; }
-            if (dat.Data == null && tag.subTypeName == "") { continue; }
+            if (dat.Data == null) { continue; }
             
             switch (tag.dataType)
             {
