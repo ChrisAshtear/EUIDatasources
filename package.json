@@ -1,13 +1,13 @@
 {
   "name": "com.chrisash.eui.datasources",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "displayName": "EasyUI DataSources Module",
   "description": "Datasource modules for EUI - Allows you to import+display data from files + urls.",
   "unity": "2020.1",
   "unityRelease": "0b5",
   "dependencies": {
     "com.chrisash.eui": "0.1.8",
-	"com.unity.nuget.newtonsoft-json": "2.0.0"
+    "com.unity.nuget.newtonsoft-json": "2.0.0"
   },
   "keywords": [
     "ui",
