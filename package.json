@@ -6,7 +6,8 @@
   "unity": "2020.1",
   "unityRelease": "0b5",
   "dependencies": {
-    "com.chrisash.eui": "0.1.6"
+    "com.chrisash.eui": "0.1.8",
+	"com.unity.nuget.newtonsoft-json": "2.0.0"
   },
   "keywords": [
     "ui",

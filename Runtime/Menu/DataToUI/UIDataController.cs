@@ -41,7 +41,16 @@ public class UIDataController : MonoBehaviour
                     Image i = obj.GetComponent<Image>();
                     if(i!=null)
                     {
-                        i.sprite = (Sprite)dat.Data;
+                        if(dat.Data.GetType() == typeof(string))
+                        {
+                            Sprite s = (Sprite)Resources.Load<Sprite>("Images/"+dat.Data.ToString());
+                            i.sprite = s;
+                        }
+                        else
+                        {
+                            i.sprite = (Sprite)dat.Data;
+                        }
+                        
                         obj.transform.localScale = oldScale;
                     }
                     /*
