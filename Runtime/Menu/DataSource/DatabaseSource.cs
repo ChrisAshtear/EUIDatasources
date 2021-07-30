@@ -8,10 +8,7 @@ using System;
 [System.Serializable]
 public class DatabaseSource : ScriptableObject
 {
-    [HideInInspector]
-    public string sourceName;
-    [HideInInspector]
-    public string addressOfData;
+
     protected bool dataReady = false;
     [HideInInspector]
     public DataType type;
@@ -252,8 +249,4 @@ public class DatabaseSource : ScriptableObject
         return 0;
     }
 
-    /*public virtual void RequestPrevSet(int amtOfRecords, int recordOffset)
-    {
-
-    }*/
 }

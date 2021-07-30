@@ -8,37 +8,29 @@ using System;
 
 [System.Serializable]
 [CreateAssetMenu(fileName = "Data", menuName = "ScriptableObjects/DatabaseSource/XMLDatabaseSource", order = 1)]
-public class XMLDatabaseSource : DatabaseSource
+public class XMLDatabaseSource : DBLoader
 {
-    public TextAsset XML_file;
-    //Props
 
     private void Awake()
     {
         type = DataType.XML;
     }
 
-    //[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-    protected override bool LoadData()
+    protected override void LoadFromString(string data)
     {
-        tables = new Dictionary<string, DataSource>();
-        displayCodes = new Dictionary<string, string>();
-        dataReady = false;
-
-            Dictionary<string, Dictionary<string, object>> data = new Dictionary<string, Dictionary<string, object>>();
 
 #if UNITY_WEBGL
             //TextAsset xml = Resources.Load(sourceName.Split('.')[0]) as TextAsset;
             //XDocument doc = XDocument.Parse(xml.text);
 #endif
-            //if x86
+        //if x86
 #if !UNITY_WEBGL
-            //XDocument doc = XDocument.Load(Application.streamingAssetsPath + "\\" + sourceName);
+        //XDocument doc = XDocument.Load(Application.streamingAssetsPath + "\\" + sourceName);
 #endif
 
         try
         {
-            XDocument doc = XDocument.Parse(XML_file.text);
+            XDocument doc = XDocument.Parse(data);
             bool firstElement = true;
             DataSource currentTable = null;
 
@@ -88,18 +80,17 @@ public class XMLDatabaseSource : DatabaseSource
                     table.setReady();
                 }
 
-               // Debug.Log(element);
+                // Debug.Log(element);
             }
             if (tables.Count > 0)
             {
                 dataReady = true;
 
             }
-            return true;
         }
-        catch(Exception e)
+        catch (Exception e)
         {
-            if(e.Message.Contains("dictionary"))
+            if (e.Message.Contains("dictionary"))
             {
                 loadStatus = "key not found";
             }
@@ -107,8 +98,7 @@ public class XMLDatabaseSource : DatabaseSource
             {
                 loadStatus = e.Message;
             }
-            return false;
         }
     }
-
 }
+
