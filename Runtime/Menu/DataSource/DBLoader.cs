@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
+using System.IO;
 
 public class DBLoader : DatabaseSource
 {
@@ -22,6 +23,8 @@ public class DBLoader : DatabaseSource
     public string remotePageFieldName;
 
     protected bool appendLoad = false;
+
+    public string filePath = "";
 
     public void SetupArguments()
     {
@@ -115,18 +118,34 @@ public class DBLoader : DatabaseSource
 
         try
         {
-            if (loadFromURL)
+            switch (inputType)
             {
-                appendLoad = true;
-                string getDataUrl = rootURL + URL;
-                NetUtil.DoWebRequest(getDataUrl, remoteArguments, webRequestType, LoadFromString);
-                return false;
+                case DataInputType.Asset:
+                    LoadFromString(local_file.text);
+                    return true;
+                    break;
+
+                case DataInputType.Moddable:
+                    //We can stream and this can be user modifiable.
+                    string path = Application.streamingAssetsPath;
+                    int index = Application.streamingAssetsPath.LastIndexOf("/");
+                    if (index >= 0) { path = path.Substring(0, index + 1); }
+                    index = filePath.IndexOf("StreamingAssets/");
+                    path += filePath.Substring(index);
+
+                    string filedata = File.ReadAllText(path);
+                    LoadFromString(filedata);
+                    return true;
+                    break;
+
+                case DataInputType.Remote:
+                    appendLoad = true;
+                    string getDataUrl = rootURL + URL;
+                    NetUtil.DoWebRequest(getDataUrl, remoteArguments, webRequestType, LoadFromString);
+                    return false;
+                    break;
             }
-            else
-            {
-                LoadFromString(local_file.text);
-                return true;
-            }
+            return false;
 
         }
         catch (Exception e)

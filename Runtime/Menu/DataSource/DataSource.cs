@@ -1,36 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using System;
 
 public enum DataType {  XML, SQL,JSON,Choice, Web, Realtime}; // we need custom handlers for all these.
 
-public enum fieldType { str, integer, flt };
 [System.Serializable]
 public class DataSource
 {
-    //public string name;
-    public string sourceName;
-    public string addressOfData;
     protected bool dataReady = false;
-    //public DataType type;
 
     public delegate void DataReadyHandler();
     public event DataReadyHandler onDataReady;
 
-    //protected List<Dictionary<string, string>> data;
     public Dictionary<string,Dictionary<string, object>> data; //(primaryKey,(obj[fieldname/fieldval])
     public string name;
     public string primaryKey = "";
-    [TextArea(3, 10)]
     public string displayCode = ""; // used for displaying an item with displayObj
 
     protected string selectedKey = "NA";
 
-    public delegate void SelectionChangedHandler();
-    public event SelectionChangedHandler selectionChanged;
+    public event DataChangedHandler selectionChanged;
 
     public delegate void DataChangedHandler();
     public event DataChangedHandler dataChanged;
@@ -43,10 +34,6 @@ public class DataSource
     public DataLibrary attributes;
 
     private List<string> entriesIndex;
-    public DataSource()
-    {
-        //condition = maxCond;
-    }
 
     public DataSource(string name,string key)
     {
@@ -69,10 +56,6 @@ public class DataSource
     public DataLibrary GetAllAttributes()
     {
         return attributes;
-    }
-
-    private void OnDestroy()
-    {
     }
 
     public void AddListener(string key, Action<string,object> callback)
@@ -110,10 +93,6 @@ public class DataSource
         }
         fieldChanged.TryGetValue(key, out Action<string,object> callback);
         callback?.Invoke(fieldName,value);
-    }
-    private void OnEnable()
-    {
-
     }
 
     public bool isDataReady()
@@ -232,11 +211,7 @@ public class DataSource
         selectedKey = keys[curIdx];
         if(doEvent)
         {
-            selectChanged?.Invoke(this);
-            if (selectionChanged != null)
-            {
-                selectionChanged();
-            }
+            fireSelectionChanged();
         }
     }
 
@@ -285,12 +260,6 @@ public class DataSource
             selectionChanged();
         }
     }
-
-    public virtual Dictionary<string,fieldType> getFields()
-    {
-        return new Dictionary<string, fieldType>();
-    }
-
 
     public virtual List<string> getFieldSimple()
     {
@@ -478,11 +447,6 @@ public class DataSource
         return new Dictionary<string, object>();
     }
 
-    public virtual string setFieldFromItemID(string id, string field,string value)
-    {
-        return "";
-    }
-
     public virtual float GetMaxValueFromField(string field)
     {
         //TODO:store these values so it doesnt get them every time.
@@ -502,7 +466,7 @@ public class DataSource
 
     public virtual Dictionary<string,object> getFieldObjsFromItemID(string id)
     {
-        if (dataReady/* && id > 0 && id < data.Count*/)
+        if (dataReady)
         {
 
             Dictionary<string, object> dict;
@@ -520,5 +484,10 @@ public class DataSource
     {
         data.TryGetValue(id, out Dictionary<string, object> fields);
         return fields;
+    }
+
+    public DataSource()
+    {
+
     }
 }

@@ -175,7 +175,7 @@ public class populateTable : populateData, I_ItemMenu
     public void NextPage()
     {
         resultCount += props.results;
-        if(!props.dataS.db.isRemote)
+        if(props.dataS.db.inputType != DataInputType.Remote)
         {
             Populate();
         }

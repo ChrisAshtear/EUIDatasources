@@ -24,20 +24,32 @@ public class DBEditor : Editor
         
         List<string> tables = dbsource.getTables();
 
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("isRemote"));
-        
-        if (!dbsource.isRemote)
+        EditorGUILayout.PropertyField(serializedObject.FindProperty("inputType"));
+
+        switch (dbsource.inputType)
         {
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("local_file"));
-        }
-        else
-        {
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("rootURL"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("URL"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("webRequestType"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultRemoteArguments"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("remoteSetIncremenAmt"));
-            EditorGUILayout.PropertyField(serializedObject.FindProperty("remotePageFieldName"));
+            case DataInputType.Asset:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("local_file"));
+                break;
+
+            case DataInputType.Moddable:
+                if (GUILayout.Button("Select streaming assets file"))
+                {
+                    dbsource.filePath = EditorUtility.OpenFilePanel("Select Data file", Application.streamingAssetsPath, "");
+                    return;
+                }
+
+                EditorGUILayout.LabelField("Path", dbsource.filePath);
+                break;
+
+            case DataInputType.Remote:
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("rootURL"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("URL"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("webRequestType"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("defaultRemoteArguments"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("remoteSetIncremenAmt"));
+                EditorGUILayout.PropertyField(serializedObject.FindProperty("remotePageFieldName"));
+                break;
         }
         
         string tableList = "";

@@ -5,6 +5,8 @@ using UnityEditor;
 using System.Linq;
 using System;
 
+public enum DataInputType { Asset, Moddable, Remote }
+
 [System.Serializable]
 public class DatabaseSource : ScriptableObject
 {
@@ -34,7 +36,7 @@ public class DatabaseSource : ScriptableObject
     [HideInInspector]
     public string loadStatus = "unloaded";
 
-    public bool isRemote = false;
+    public DataInputType inputType;
 
     //Props
     public DatabaseSource()
@@ -235,12 +237,6 @@ public class DatabaseSource : ScriptableObject
         {
             selectionChanged();
         }
-    }
-
-    //TODO:get all fields.
-    public virtual Dictionary<string, fieldType> getFields()
-    {
-        return new Dictionary<string, fieldType>();
     }
 
     //request next data set
