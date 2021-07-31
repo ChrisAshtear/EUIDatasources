@@ -7,7 +7,6 @@ using UnityEngine.UI;
 using System;
 using Unity;
 using UnityEngine.Events;
-using UnityEditor;
 using System.Linq;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
@@ -77,20 +76,16 @@ public class populateTable : populateData, I_ItemMenu
         bool odd = true;
 
         string[] fieldArr = fieldList.Split(',');
-        //if (fieldWidth == null)
-        {
             
-            fieldWidth = new int[fieldArr.Length];
+        fieldWidth = new int[fieldArr.Length];
 
-            DataLibrary sample = new DataLibrary(props.data.getObjFromItemID(keys[0]));
-            for (int i = 0; i < fieldArr.Length; i++)
-            {
-                string val = sample.GetTxtValue(fieldArr[i]);
-                fieldWidth[i] = val.Length;
-                if (fieldWidth[i] < 4) { fieldWidth[i] = 4; }
-            }
+        DataLibrary sample = new DataLibrary(props.data.getObjFromItemID(keys[0]));
+        for (int i = 0; i < fieldArr.Length; i++)
+        {
+            string val = sample.GetTxtValue(fieldArr[i]);
+            fieldWidth[i] = val.Length;
+            if (fieldWidth[i] < 4) { fieldWidth[i] = 4; }
         }
-        
 
         DataLibrary headerData = new DataLibrary();
         if (showHeader)

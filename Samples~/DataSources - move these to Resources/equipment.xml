@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<EquipmentCollection xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <Weapons displayCode="Name&#xD;&#xA;=&#xD;&#xA;Description&#xD;&#xA;Price|BasePrice&#xD;&#xA;Damage|Damage&#xD;&#xA;Speed|Speed&#xD;&#xA;Durability|Durability&#xD;&#xA;Armor|Armor&#xD;&#xA;Proficiency|Proficiency">
+    <Weapon UUID="gladius" Armor="0" Durability="10" MinimumPrice="100" BasePrice="200" iconIdx="1" Name="Gladius" fireSFX="ImpactFire" fireEffect="explosion_bolt" Description="Your enemy will quickly get your point." Range="0" Speed="10" Damage="7" Proficiency="s_bladed" />
+    <Weapon UUID="pugio" Armor="0" Durability="6" MinimumPrice="20" BasePrice="80" iconIdx="1" Name="Pugio" fireSFX="ImpactFire" fireEffect="explosion_bolt" Description="Stabby, stabby!" Range="0" Speed="16" Damage="4" Proficiency="s_bladed" />
+    <Weapon UUID="pilum" Armor="0" Durability="5" MinimumPrice="100" BasePrice="900" iconIdx="4" Name="Pilum" fireSFX="ImpactFire" fireEffect="explosion_bolt" Description="It cant be thrown back at you, but you cant use it again either. Make it count." Range="0" Speed="5" Damage="20" Proficiency="s_thrown" NeedsAmmo="true" Accuracy="45" />
+    <Weapon UUID="spatha" Armor="0" Durability="10" MinimumPrice="100" BasePrice="350" iconIdx="2" Name="Spatha" fireSFX="ImpactFire" fireEffect="explosion_bolt" Description="A longer version of the gladius, used for cavalry" Range="0" Speed="7" Damage="12" Proficiency="s_bladed" />
+    <Weapon UUID="scutum" Armor="5" Durability="10" MinimumPrice="700" BasePrice="900" iconIdx="3" Name="Scutum Shield" fireSFX="ImpactFire" fireEffect="explosion_bolt" Description="A Heavy-duty, full length shield. It's mostly for defense, but if you bash someone in the face with it, they aren't going to be too happy either." Range="0" Speed="1" Damage="2" Proficiency="Shields" />
+    <Weapon UUID="none" Armor="0" Durability="99" MinimumPrice="0" BasePrice="0" iconIdx="0" Name="Fists" fireSFX="ImpactFire" fireEffect="explosion_bolt" Description="How can you slap?!" Range="0" Speed="20" Damage="2" Proficiency="s_martial" />
+  </Weapons>
+  <Armors displayCode="Name&#xD;&#xA;=&#xD;&#xA;Description&#xD;&#xA;Price|BasePrice&#xD;&#xA;Armor|Armor&#xD;&#xA;Durability|Durability&#xD;&#xA;Speed Penalty|Speed" spritesheet="armor.png">
+    <Armor UUID="lorica.seg" Armor="15" Durability="20" MinimumPrice="500" BasePrice="700" iconIdx="5" Name="Lorica Segmentata" fireSFX="ImpactFire" fireEffect="explosion_bolt" Description="Traditional attire of the Roman Legion" Speed="10" Damage="0" Proficiency="s_hArmor" />
+    <Armor UUID="none" Armor="1" Durability="20" MinimumPrice="0" BasePrice="0" iconIdx="6" Name="Plain Clothes" fireSFX="ImpactFire" fireEffect="explosion_bolt" Description="Better hope you dont get hit." Speed="10" Damage="0" Proficiency="s_lArmor" />
+    <Armor UUID="cuirass" Armor="7" Durability="20" MinimumPrice="300" BasePrice="400" iconIdx="7" Name="Bronze Cuirass" fireSFX="ImpactFire" fireEffect="explosion_bolt" Description="Chest plate that protects your vitals." Speed="10" Damage="0" Proficiency="s_hArmor" />
+  </Armors>
+</EquipmentCollection>

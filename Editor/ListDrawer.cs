@@ -8,7 +8,7 @@ using UnityEngine;
 
 
 #if UNITY_EDITOR
-[CustomPropertyDrawer(typeof(ListProps))]
+//[CustomPropertyDrawer(typeof(ListProps))]
 public class ListDrawer : PropertyDrawer
 {
 

@@ -33,11 +33,7 @@ public class selectListItem
 
 // Custom serializable class
 //[Serializable]
-public class ListProps : DataProps
-{
-    public listFunction onSelect = listFunction.Form;
-    public listObjProps displayObj;
-}
+
 [System.Serializable]
 public class SourceProps
 {
@@ -48,8 +44,8 @@ public class SourceProps
 
 public class populateList : populateData, I_ItemMenu
 {
-
-    public new ListProps props;
+    public listFunction onSelect = listFunction.Form;
+    public GameObject displayObj;
 
     private Dictionary<string,object> preservedData = new Dictionary<string, object>();
 
@@ -76,7 +72,7 @@ public class populateList : populateData, I_ItemMenu
         {
             displayCode = d.displayCode;
         }
-        UIDisplayCodeController dc = props.displayObj.GetComponent<UIDisplayCodeController>();
+        UIDisplayCodeController dc = displayObj.GetComponent<UIDisplayCodeController>();
         if (dc != null)
         {
             dc.displayCode = displayCode;
@@ -85,9 +81,10 @@ public class populateList : populateData, I_ItemMenu
         foreach (string key in keys)
         {
             bool filtered = false;
+            if ((key == "0" || key =="none") && !showEmptyItem) { continue; }
             foreach (SourceFilter filter in allFilters)
             {
-                if(key == "0" && showEmptyItem){ continue; }
+                
                 string value = d.getFieldFromItemID(key, filter.filterVar);
                 if(!filter.MatchesFilter(value))
                 {

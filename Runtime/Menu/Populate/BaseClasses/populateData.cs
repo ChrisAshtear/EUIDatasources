@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using System;
 using Unity;
 using UnityEngine.Events;
-using UnityEditor;
 using System.Linq;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
@@ -108,16 +107,17 @@ public class FilterDrawer : PropertyDrawer
 #endif
 */
 [Serializable]
-public class DataProps : BaseProps
+public class DataProps
 {
-    public UnityEvent ev;
-    public UnityEvent<IDataLibrary> evData;
-
-    public int results = 20;
     [HideInInspector]
     public DataSource data { get { return dataS.db.getTable(dataS.tableName); } }
     public SourceProps dataS;
+
+    public int results = 20;
     public GameObject detailsContainer;
+
+    public UnityEvent ev;
+    public UnityEvent<IDataLibrary> evData;
 }
 
 public class populateData : populateBase, I_ItemMenu

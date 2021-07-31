@@ -314,7 +314,7 @@ public class DataSource
         {
             List<string> allVals = new List<string>();
             //TODO: if remote DB, check if we can get more results
-            if (results == -1) { results = data.Values.Count; }
+            if (results == -1 || data.Values.Count < results) { results = data.Values.Count; }
             else { results += offset; }
             for(int i = offset;i<results;i++)
             {

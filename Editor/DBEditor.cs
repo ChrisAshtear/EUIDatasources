@@ -25,7 +25,8 @@ public class DBEditor : Editor
         List<string> tables = dbsource.getTables();
 
         EditorGUILayout.PropertyField(serializedObject.FindProperty("inputType"));
-
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("----------Source Options----------");
         switch (dbsource.inputType)
         {
             case DataInputType.Asset:
@@ -38,7 +39,11 @@ public class DBEditor : Editor
                     dbsource.filePath = EditorUtility.OpenFilePanel("Select Data file", Application.streamingAssetsPath, "");
                     return;
                 }
+                string filename = "";
+                int index = dbsource.filePath.LastIndexOf("/");
+                if (index >= 0) { filename = dbsource.filePath.Substring(index+1); }
 
+                EditorGUILayout.LabelField("File", filename);
                 EditorGUILayout.LabelField("Path", dbsource.filePath);
                 break;
 
@@ -51,10 +56,12 @@ public class DBEditor : Editor
                 EditorGUILayout.PropertyField(serializedObject.FindProperty("remotePageFieldName"));
                 break;
         }
-        
+       
+        EditorGUILayout.Space();
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("----------Data Info----------");
         string tableList = "";
         int numTables = tables?.Count ?? 0;
-        EditorGUILayout.Space();
         EditorGUILayout.LabelField("#Tables", numTables.ToString());
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Status: ", dbsource.loadStatus);

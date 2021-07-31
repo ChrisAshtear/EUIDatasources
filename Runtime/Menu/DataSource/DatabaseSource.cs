@@ -159,10 +159,7 @@ public class DatabaseSource : ScriptableObject
     {
         if (clearTables) { tables = new Dictionary<string, DataSource>(); }
         bool loaded = LoadData();
-        if(loaded)
-        {
-            doOnDataReady();
-        }
+        
     }
 
     protected virtual bool LoadData()

@@ -1,0 +1,8 @@
+{
+    "skip": 0,
+    "take": 20,
+    "currentPage": 1,
+    "totalPageCount": 1400,
+    "totalRecordCount": 28000,
+    "howto":"Defeat your enemies"
+}

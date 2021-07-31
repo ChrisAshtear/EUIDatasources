@@ -45,7 +45,6 @@ public class XMLDatabaseSource : DBLoader
                 {
                     DataSource table = new DataSource();
                     table.name = element.Name.ToString();
-                    //table.parentData = this;
                     addTable(element.Name.ToString(), table);
                     currentTable = table;
                     table.primaryKey = primaryKey;
@@ -59,7 +58,7 @@ public class XMLDatabaseSource : DBLoader
                     {
                         //table.spritesheet = Resources.Load<Sprite>(element.Attribute("spritesheet").Value);
                     }
-                    table.setReady();
+                    
                 }
                 else if (element.Parent.Name.ToString() == currentTable.name)//Entry
                 {
@@ -77,16 +76,18 @@ public class XMLDatabaseSource : DBLoader
                     table.data = new Dictionary<string, Dictionary<string, object>>();
                     Dictionary<string, object> list = element.Attributes().ToDictionary(c => c.Name.LocalName, c => (object)c.Value);
                     currentTable.data.Add(table.name, list);
-                    table.setReady();
                 }
 
-                // Debug.Log(element);
             }
             if (tables.Count > 0)
             {
                 dataReady = true;
-
+                foreach (DataSource t in tables.Values)
+                {
+                    t.setReady();
+                }
             }
+            doOnDataReady();
         }
         catch (Exception e)
         {

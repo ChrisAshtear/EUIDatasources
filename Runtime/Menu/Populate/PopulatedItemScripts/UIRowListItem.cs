@@ -72,8 +72,11 @@ public class UIRowListItem : UIButtonListItem
                 {
                     case DataLibSupportedTypes.text:
                         columns.TryGetValue(fields[i], out GameObject g);
-                        TextMeshProUGUI text = g.GetComponent<TextMeshProUGUI>();
-                        text.text = dat.DisplayValue;
+                        if (g != null)
+                        {
+                            TextMeshProUGUI text = g.GetComponent<TextMeshProUGUI>();
+                            text.text = dat.DisplayValue;
+                        }
                         break;
                 }
             }
