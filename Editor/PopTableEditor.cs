@@ -28,6 +28,7 @@ public class TableEditor : Editor
         EditorStyles.label.fontStyle = FontStyle.Normal;
         GUIutil.DrawUILine(Color.white);
         EditorGUILayout.BeginVertical("box");
+        EditorGUILayout.ObjectField(serializedObject.FindProperty("prefab"), new GUIContent("Table Row Prefab"));
         EditorGUILayout.PrefixLabel("Striping | Show Header");
         EditorGUILayout.BeginHorizontal("box");
         EditorGUILayout.PropertyField(serializedObject.FindProperty("striping"), new GUIContent(""));

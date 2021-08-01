@@ -1199,10 +1199,8 @@ MonoBehaviour:
   detailsPane: {fileID: 0}
   db: {fileID: 11400000, guid: 937c72bb88a36c64994f7a152b21721b, type: 2}
   data:
-    sourceName: 
-    addressOfData: 
-    name: Skills
-    primaryKey: UUID
+    name: 
+    primaryKey: 
     displayCode: 
     spritesheet: {fileID: 0}
   chosenField: Name

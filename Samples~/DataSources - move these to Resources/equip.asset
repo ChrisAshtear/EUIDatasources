@@ -16,7 +16,7 @@ MonoBehaviour:
   primaryKey: UUID
   loadStatus: loaded.
   inputType: 0
-  local_file: {fileID: 4900000, guid: a72c3f894a0f906479ea6d2fe3c92213, type: 3}
+  local_file: {fileID: 4900000, guid: 26ec6c7df017a6e42aada8eb7a9ada7e, type: 3}
   rootURL: 
   URL: 
   loadFromURL: 0

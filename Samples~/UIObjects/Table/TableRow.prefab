@@ -64,14 +64,12 @@ MonoBehaviour:
   text: {fileID: 0}
   button: {fileID: 0}
   source:
-    sourceName: 
-    addressOfData: 
     name: 
     primaryKey: 
     displayCode: 
     spritesheet: {fileID: 0}
   containerObject: {fileID: 6226516287172413926}
-  RowCellPrefab: {fileID: 6226516285635520970, guid: 43da326084d59744691acb941c3f8b7d, type: 3}
+  RowCellPrefab: {fileID: 6226516285635520970, guid: 0273a34b2fec94d458f5bf573257ad4a, type: 3}
   fieldList: 
 --- !u!114 &5331259166119106092
 MonoBehaviour:
@@ -322,6 +320,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fieldName: bgColor
-  subTypeName: 
   dataType: 6
   invert: 0
