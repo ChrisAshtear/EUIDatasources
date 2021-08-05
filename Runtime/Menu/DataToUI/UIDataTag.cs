@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
-public enum UIDataType { Value,Text,Sprite,Bar,Highlight,List,Color,DataButton,DisableButtonIfTrue,ShowIfTrue,ShowIfEqual};
+public enum UIDataType { Value,Text,Sprite,Bar,Highlight,List,Color,DataButton,DisableButtonIfTrue,ShowIfTrue,ShowIfEqual,ShowIfExists};
 
 public class UIDataTag : MonoBehaviour
 {

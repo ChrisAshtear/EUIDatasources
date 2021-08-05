@@ -7,10 +7,12 @@ public class UIShowAttributes : UIDataController
 {
     public SourceProps props;
     private DataSource data;
+    public bool manualUpdate = false;
+
     // Use this for initialization
     void Start()
     {
-        
+        if (manualUpdate) { return; }
         Debug.Log(props);
         if (props.db != null)
         {

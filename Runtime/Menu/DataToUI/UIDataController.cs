@@ -29,7 +29,7 @@ public class UIDataController : MonoBehaviour
             //Debug.Log("UITagType:" + tag.dataType.ToString());
             if (tag.dataType == UIDataType.DisableButtonIfTrue && dat.Data==null) { dat.Data = ""; }
             if (tag.dataType == UIDataType.ShowIfTrue && dat.Data==null) { dat.Data = "false"; }
-            if (dat.Data == null) { continue; }
+            if (dat.Data == null && tag.dataType != UIDataType.ShowIfExists) { continue; }
             
             switch (tag.dataType)
             {
@@ -138,6 +138,10 @@ public class UIDataController : MonoBehaviour
                     bool show = (dat.Data.ToString() == subType.ToString());
                     obj.SetActive(show);
                     if (tag.invert) { obj.SetActive(!show); }*/
+                    break;
+                case UIDataType.ShowIfExists:
+                    bool hideObj = (dat.Data == null) ^ tag.invert;
+                    obj.SetActive(!hideObj);
                     break;
             }
 

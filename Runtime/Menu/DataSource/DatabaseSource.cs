@@ -95,10 +95,22 @@ public class DatabaseSource : ScriptableObject
 
     public void dropTable(string tableName)
     {
-        tableName = tableName.ToLower();
-        if (tables.ContainsKey(tableName))
+        DataSource table = getTable(tableName);
+        if (table.name != "NotFound")
         {
             tables.Remove(tableName);
+            changedData();
+        } 
+    }
+
+    public void clearTable(string tableName)
+    {
+        DataSource table = getTable(tableName);
+        if(table.name != "NotFound")
+        {
+            table.attributes = new DataLibrary();
+            table.data.Clear();
+            changedData();
         }
     }
 
@@ -142,6 +154,7 @@ public class DatabaseSource : ScriptableObject
     {
         tableName = tableName.ToLower();
         DataSource table = new DataSource();
+        table.name = "NotFound";
         tables?.TryGetValue(tableName, out table);
         return table;
     }
@@ -205,7 +218,7 @@ public class DatabaseSource : ScriptableObject
 
     public void changedData()
     {
-        if (dataChanged != null && selectedKey != "NA")
+        if (dataChanged != null)
         {
             dataChanged();
         }

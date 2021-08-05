@@ -22,7 +22,7 @@ public static class DataSourceInit
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     public static void setupSettings()
     {
-        ProjectSettings.data = Resources.LoadAll<ProjectData>("")[0];
+        ProjectSettings.data = ProjectSettings.GetData();
         Debug.Log("pdata" + ProjectSettings.data);
     }
 }

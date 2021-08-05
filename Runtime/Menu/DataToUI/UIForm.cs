@@ -2,11 +2,24 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class UIForm : MonoBehaviour
 {
-    public JSONDatabaseSource source;
+    public DBLoader source;
     protected List<UIDataTag> uiObjects;
+    public UnityEvent OnResponse;
+
+    private void Awake()
+    {
+        
+    }
+
+    public void DoOnResponse()
+    {
+        if (OnResponse != null) { OnResponse.Invoke(); }
+        source.dataChanged -= DoOnResponse;//remove the event as we only need this to be refreshed once.
+    }
 
     public void SubmitForm()
     {
@@ -19,8 +32,10 @@ public class UIForm : MonoBehaviour
             switch (tag.dataType) 
             {
                 case UIDataType.Value:
-                string txt = obj.GetComponent<TMPro.TextMeshProUGUI>().text;
+                TMPro.TextMeshProUGUI textObj = obj.GetComponent<TMPro.TextMeshProUGUI>();
+                string txt = textObj.text;
                 formFields.Add( tag.fieldName, txt );
+                textObj.text = "";//doesnt work? need to control tmp text input
                 break;
 
             }
@@ -29,6 +44,7 @@ public class UIForm : MonoBehaviour
         {
             source.SetArgument( field.Key, field.Value, false );
         }
+        source.dataChanged += DoOnResponse;
         source.DoLoadData( false );
     }
 }
