@@ -48,10 +48,10 @@ public class SourceDrawer : PropertyDrawer
         var labelRect = getRect(100, position);
         var tableRect = getRect(100, position);
 
-        GUIutil.doPrefixLabel(ref labelRect, "Source");
+        EdGUIutil.doPrefixLabel(ref labelRect, "Source");
         labelRect.height = EditorGUI.GetPropertyHeight(property.FindPropertyRelative("db"));
         EditorGUI.PropertyField(labelRect, property.FindPropertyRelative("db"), GUIContent.none);
-        GUIutil.doPrefixLabel(ref tableRect, "Table");
+        EdGUIutil.doPrefixLabel(ref tableRect, "Table");
 
         if (obj != null)
         {

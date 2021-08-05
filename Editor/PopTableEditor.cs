@@ -26,7 +26,7 @@ public class TableEditor : Editor
         EditorStyles.label.fontStyle = FontStyle.Bold;
         EditorGUILayout.LabelField("Table Options");
         EditorStyles.label.fontStyle = FontStyle.Normal;
-        GUIutil.DrawUILine(Color.white);
+        EdGUIutil.DrawUILine(Color.white);
         EditorGUILayout.BeginVertical("box");
         EditorGUILayout.ObjectField(serializedObject.FindProperty("prefab"), new GUIContent("Table Row Prefab"));
         EditorGUILayout.PrefixLabel("Striping | Show Header");
@@ -43,7 +43,7 @@ public class TableEditor : Editor
         EditorGUILayout.Space();
         EditorGUILayout.PropertyField(serializedObject.FindProperty("fieldList"));
         EditorGUILayout.EndVertical();
-        GUIutil.DrawUILine(Color.white);
+        EdGUIutil.DrawUILine(Color.white);
         //not supported yet EditorGUILayout.PropertyField(serializedObject.FindProperty("sortable"));
         EditorGUILayout.Space();
 
