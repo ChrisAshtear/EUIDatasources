@@ -15,10 +15,13 @@ public class DatabaseSource : ScriptableObject
     [HideInInspector]
     public DataType type;
 
+    public bool lockType = false;//If false type is not forced. if true, the DBsource object cannot be changed to a new inputtype.
+
     public delegate void DataReadyHandler();
     public event DataReadyHandler onDataReady;
 
     public Dictionary<string, DataSource> tables;
+    public DataSource RootTable { get { return getTable("root"); } }
 
     public Dictionary<string, string> displayCodes;
 

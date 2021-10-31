@@ -35,7 +35,7 @@ public class DataSource
 
     private List<string> entriesIndex;
 
-    public DataSource(string name,string key)
+    public DataSource(string name = "noname",string key = "none")
     {
         primaryKey = key;
         this.name = name;
@@ -215,7 +215,7 @@ public class DataSource
         }
     }
 
-    protected void fireSelectionChanged()
+    public void fireSelectionChanged()
     {
         selectChanged?.Invoke(this);
         if (selectionChanged != null)
@@ -486,8 +486,4 @@ public class DataSource
         return fields;
     }
 
-    public DataSource()
-    {
-
-    }
 }

@@ -40,6 +40,7 @@ public class SourceProps
     public DatabaseSource db;
     public string tableName;
     public string ID;
+    public DataSource source { get { return db.getTable(tableName); } }
 }
 
 public class populateList : populateData, I_ItemMenu
@@ -55,6 +56,8 @@ public class populateList : populateData, I_ItemMenu
         bool selected = false;
 
         Clear();
+
+        //if(displayObj == null) { displayObj = gameObject;}
 
         DataSource d;
         string primaryKey = "";
@@ -72,11 +75,16 @@ public class populateList : populateData, I_ItemMenu
         {
             displayCode = d.displayCode;
         }
-        UIDisplayCodeController dc = displayObj.GetComponent<UIDisplayCodeController>();
-        if (dc != null)
+
+        if (displayObj != null)
         {
-            dc.displayCode = displayCode;
+            UIDisplayCodeController dc = displayObj.GetComponent<UIDisplayCodeController>();
+            if (dc != null)
+            {
+                dc.displayCode = displayCode;
+            }
         }
+        
 
         foreach (string key in keys)
         {
@@ -94,11 +102,18 @@ public class populateList : populateData, I_ItemMenu
             if (filtered) { continue; }
 
             GameObject obj = Instantiate(prefab, layoutGroup.transform);
+            
             obj.transform.parent = layoutGroup.transform;
             obj.name = key;
-            UIButtonListItem listItem = obj.GetComponent<UIButtonListItem>();
+            if (!obj.TryGetComponent<UIButtonListItem>(out var listItem))
+            {
+                Debug.LogError("No UI button list item found on " + obj.name);
+                continue;
+            }
+            //UIButtonListItem listItem = obj.GetComponent<UIButtonListItem>();
             d.AddListener(key, listItem.SourceUpdate);
             DataLibrary dat = new DataLibrary(props.data.getObjFromItemID(key));
+
             foreach (KeyValuePair<string, object> de in preservedData)
             {
                 dat.SetValue(de.Key, de.Value);

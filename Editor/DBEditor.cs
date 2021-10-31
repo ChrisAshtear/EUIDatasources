@@ -23,9 +23,12 @@ public class DBEditor : Editor
         serializedObject.Update();
         
         List<string> tables = dbsource.getTables();
-
-        EditorGUILayout.PropertyField(serializedObject.FindProperty("inputType"));
-        EditorGUILayout.Space();
+        if (dbsource.lockType)
+        {
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("inputType"));
+            EditorGUILayout.Space();
+        }
+        
         EditorGUILayout.LabelField("----------Source Options----------");
         switch (dbsource.inputType)
         {

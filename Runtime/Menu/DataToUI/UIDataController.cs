@@ -97,10 +97,10 @@ public class UIDataController : MonoBehaviour
                     break;
                 case UIDataType.Color:
                     Image imgToColor = obj.GetComponent<Image>();
-                    if (imgToColor != null) { imgToColor.color = (Color)dat.Data; }
+                    if (imgToColor != null) { imgToColor.color = (Color)dat.Data; if (Application.isEditor) { imgToColor.SetAllDirty(); } }
                     TMPro.TextMeshProUGUI text = obj.GetComponent<TMPro.TextMeshProUGUI>();
                     if(text != null) { text.color = (Color)dat.Data; }
-                    if (Application.isEditor) { imgToColor.SetAllDirty(); }
+                    
                     break;
 
                 case UIDataType.DataButton:
@@ -110,6 +110,11 @@ public class UIDataController : MonoBehaviour
 
                 case UIDataType.DisableButtonIfTrue:
                     Button button2 = obj.GetComponent<Button>();
+                    if (dat.Data == "")
+                    {
+                        Debug.LogError("DisableButtonIfTrue: value not found - " + tag.fieldName);
+                        continue;
+                    }
                     button2.interactable = !Convert.ToBoolean(dat.Data);
                     if (tag.invert) { button2.interactable = !button2.interactable; }
                     break;
