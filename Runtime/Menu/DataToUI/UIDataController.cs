@@ -25,6 +25,10 @@ public class UIDataController : MonoBehaviour
             IData dat = data.GetValue(tag.fieldName);
             GameObject obj = tag.gameObject;
             IData subType = null;
+            if (tag.subTypeName != "")
+            {
+                subType = data.GetValue(tag.subTypeName);
+            }
             //Debug.Log("UITag:" + tag.name);
             //Debug.Log("UITagType:" + tag.dataType.ToString());
             if (tag.dataType == UIDataType.DisableButtonIfTrue && dat.Data==null) { dat.Data = ""; }
@@ -139,10 +143,9 @@ public class UIDataController : MonoBehaviour
                     break;
 
                 case UIDataType.ShowIfEqual:
-                    /*
                     bool show = (dat.Data.ToString() == subType.ToString());
                     obj.SetActive(show);
-                    if (tag.invert) { obj.SetActive(!show); }*/
+                    if (tag.invert) { obj.SetActive(!show); }
                     break;
                 case UIDataType.ShowIfExists:
                     bool hideObj = (dat.Data == null) ^ tag.invert;

@@ -290,9 +290,10 @@ public class DataSource
             foreach (Dictionary<string, object> dict in data.Values)
             {
                 object val = "none";
-                dict.TryGetValue(field, out val);
-
-                allVals.Add(val.ToString());
+                bool found = dict.TryGetValue(field, out val);
+                if(found)
+                { allVals.Add(val.ToString()); }
+                else { Debug.LogError("DataSource-GetFieldFromAllItems failed: "+field+" not found." + name + "-" + GetHashCode());}
                 // do something with entry.Value or entry.Key
             }
             return allVals;

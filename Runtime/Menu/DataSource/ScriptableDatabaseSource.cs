@@ -10,7 +10,7 @@ public class ScriptableDatabaseSource : DBLoader
 {
     public List<Type> ObjectTypes;
 
-    private void Awake()
+    private void Reset()
     {
         type = DataType.Realtime;
         lockType = true;
@@ -19,6 +19,8 @@ public class ScriptableDatabaseSource : DBLoader
 
     protected override bool LoadData()
     {
+        primaryKey = "DefinitionID";
+        Debug.Log("ScriptDB loading");
         ItemDefinition[] foundDefs = Resources.LoadAll<ItemDefinition>("");
         if(foundDefs.Length == 0) { return false; }
         //init tables. This should be done already by base class?
@@ -48,6 +50,9 @@ public class ScriptableDatabaseSource : DBLoader
 
         dataReady = true;
         doOnDataReady();
+
+        
+
         return true;
     }
 
