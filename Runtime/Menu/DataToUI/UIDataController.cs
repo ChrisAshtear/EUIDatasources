@@ -143,7 +143,8 @@ public class UIDataController : MonoBehaviour
                     break;
 
                 case UIDataType.ShowIfEqual:
-                    bool show = (dat.Data.ToString() == subType.ToString());
+                    bool show = false;
+                    if (subType != null) { show = (dat.Data.ToString() == subType.ToString()); }
                     obj.SetActive(show);
                     if (tag.invert) { obj.SetActive(!show); }
                     break;
