@@ -1,6 +1,6 @@
 {
   "name": "com.chrisash.eui.datasources",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "displayName": "EasyUI DataSources Module",
   "description": "Datasource modules for EUI - Allows you to import+display data from files + urls.",
   "unity": "2020.1",
