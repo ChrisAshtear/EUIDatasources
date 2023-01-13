@@ -60,7 +60,7 @@ public class populateBase : MonoBehaviour
     public void DoPopulate()
     {
         PrePopulate();
-        //Populate();
+        Populate();
     }
 
     public virtual void Populate()

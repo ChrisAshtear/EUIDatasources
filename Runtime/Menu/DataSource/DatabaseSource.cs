@@ -55,6 +55,7 @@ public class DatabaseSource : ScriptableObject
 
     private void Awake()
     {
+        DoLoadData(true);
     }
 
     private void OnEnable()
@@ -81,6 +82,12 @@ public class DatabaseSource : ScriptableObject
                 d.selectChanged += action;
             }
         }
+    }
+
+    public void SetDataReadyCallback(DataReadyHandler callback)
+    {
+        if (dataReady) { callback.Invoke(); }
+        else { onDataReady += callback; }
     }
 
     public void addChangedCallback(string tableName, Action<DataSource> action)

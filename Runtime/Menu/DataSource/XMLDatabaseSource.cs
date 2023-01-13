@@ -57,7 +57,7 @@ public class XMLDatabaseSource : DBLoader
                     if (element.Attribute("spritesheet") != null)
                     {
                         //table.spritesheet = Resources.Load<Sprite>(element.Attribute("spritesheet").Value);
-                    }
+                    }//Some kind of handler for specific resources?
                     
                 }
                 else if (element.Parent.Name.ToString() == currentTable.name)//Entry

@@ -144,8 +144,11 @@ public class populateData : populateBase, I_ItemMenu
             Debug.Log(props);
             if(props.dataS != null)
             {
-               props.dataS.db.onDataReady += DoPopulate;
-               props.dataS.db.dataChanged += DoPopulate;
+               Debug.Log(props.dataS);
+               props.dataS.db.DoLoadData();
+                //props.dataS.db.onDataReady += DoPopulate;
+               props.dataS.db.SetDataReadyCallback(DoPopulate);
+               props.dataS.db.dataChanged += DoPopulate;//maybe have a function that checks to see if data is ready then calls the function if it already is.
             }
 
             DoPopulate();
