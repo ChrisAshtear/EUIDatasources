@@ -112,10 +112,10 @@ public class DataDropdown : TMP_Dropdown
         string key = opts[chosenVal];
         Debug.Log("Chose " + chosenVal + ": " + key);
 
-        Dictionary<string, object> dat = data.getFieldsFromItemID(key);
+        DataItem dat = data.getFieldsFromItemID(key);
 
         string output = "";
-        foreach (KeyValuePair<string, object> entry in dat)
+        foreach (KeyValuePair<string, object> entry in dat.GetAllData())
         {
 
             output += entry.Key + " : " + entry.Value + "\n";
@@ -140,7 +140,7 @@ public class DataDropdown : TMP_Dropdown
 
         string key = this.optionKeys[chosen];
 
-        Dictionary<string, object> dat = data.getFieldsFromItemID(key);
+        DataItem dat = data.getFieldsFromItemID(key);
 
         
         ctrl.RefreshData(new DataLibrary(dat));

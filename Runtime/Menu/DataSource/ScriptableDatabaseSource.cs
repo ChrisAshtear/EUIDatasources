@@ -42,8 +42,9 @@ public class ScriptableDatabaseSource : DBLoader
                 table = new DataSource(itemType.ToString(),"DefinitionID");
                 addTable(itemType.ToString(), table);
             }
-            table.data.Add(item.DefinitionID.ToString(), fields);
-            if(table != defTable) { defTable.data.Add(item.DefinitionID.ToString(), fields); }
+            DataItem d_item = new DataItem(item.Name, itemType.ToString(), fields);
+            table.data.Add(item.DefinitionID.ToString(), d_item);
+            if(table != defTable) { defTable.data.Add(item.DefinitionID.ToString(), d_item); }
             table.setReady();
 
         }

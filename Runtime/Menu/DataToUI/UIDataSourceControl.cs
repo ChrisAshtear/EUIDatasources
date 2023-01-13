@@ -18,9 +18,9 @@ public class UIDataSourceControl : UIDataController
 
     public void RefreshFromSource()
     {                 
-        Dictionary<string, object> database = source.getSelected();
+        DataItem item = source.getSelected();
 
-        lib = new DataLibrary(database);
+        lib = new DataLibrary(item);
 
         RefreshData(lib);
     }

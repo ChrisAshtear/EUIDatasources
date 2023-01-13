@@ -1,9 +1,11 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditor.Build;
 
 public enum DataLibSupportedTypes { text, number, sprite };
 
@@ -74,6 +76,17 @@ public class DataLibrary : IDataLibrary,IDataLibraryReadOnly, IEnumerator<IData>
     {
         Values = new Dictionary<string, DataObject>();
         foreach (KeyValuePair<string, object> de in data)
+        {
+            Values.Add(de.Key.ToLower(), new DataObject(de.Key, de.Value));
+        }
+        callbackList = new Dictionary<string, Action<DataObject>>();
+    }
+
+    public DataLibrary(DataItem item)
+    {
+        //TODO: replace datalibrary with dataitem or merge
+        Values = new Dictionary<string, DataObject>();
+        foreach (KeyValuePair<string, object> de in item.GetAllData())
         {
             Values.Add(de.Key.ToLower(), new DataObject(de.Key, de.Value));
         }

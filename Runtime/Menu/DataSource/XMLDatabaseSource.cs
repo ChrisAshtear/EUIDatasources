@@ -48,7 +48,7 @@ public class XMLDatabaseSource : DBLoader
                     addTable(element.Name.ToString(), table);
                     currentTable = table;
                     table.primaryKey = primaryKey;
-                    table.data = new Dictionary<string, Dictionary<string, object>>();
+                    table.data = new Dictionary<string, DataItem>();
                     if (element.Attribute("displayCode") != null)
                     {
                         displayCodes.Add(element.Name.ToString(), element.Attribute("displayCode").Value);
@@ -63,7 +63,8 @@ public class XMLDatabaseSource : DBLoader
                 else if (element.Parent.Name.ToString() == currentTable.name)//Entry
                 {
                     Dictionary<string, object> list = element.Attributes().ToDictionary(c => c.Name.LocalName, c => (object)c.Value);
-                    currentTable.data.Add(list[primaryKey].ToString(), list);
+                    DataItem item = new DataItem(element.Name.ToString(), element.Name.ToString(), list);
+                    currentTable.data.Add(list[primaryKey].ToString(), item);
                 }
                 else if (element.HasAttributes)
                 {
@@ -73,9 +74,10 @@ public class XMLDatabaseSource : DBLoader
                     addTable(element.Name.ToString(), table);
                     currentTable = table;
                     table.primaryKey = primaryKey;
-                    table.data = new Dictionary<string, Dictionary<string, object>>();
+                    table.data = new Dictionary<string, DataItem>();
                     Dictionary<string, object> list = element.Attributes().ToDictionary(c => c.Name.LocalName, c => (object)c.Value);
-                    currentTable.data.Add(table.name, list);
+                    DataItem item = new DataItem(element.Name.ToString(), element.Name.ToString(), list);
+                    currentTable.data.Add(table.name, item);
                 }
 
             }

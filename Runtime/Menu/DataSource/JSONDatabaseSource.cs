@@ -63,7 +63,11 @@ public class JSONDatabaseSource : DBLoader
                 {
                     Dictionary<string, object> row = JsonConvert.DeserializeObject<Dictionary<string, object>>(t.ToString());
                     //TODO:the dict shouldnt be accessed directly.
-                    table.data.Add(row[primaryKey].ToString(), row);
+                    //TODO: get name and type of json 
+                    string name = "noname";
+                    string type = "notype";
+                    DataItem item = new DataItem(name, type, row);
+                    table.data.Add(row[primaryKey].ToString(), item);
                 }
                 table.setReady();
             }

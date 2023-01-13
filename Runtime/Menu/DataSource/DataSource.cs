@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
+using static UnityEditor.Progress;
 
 public enum DataType {  XML, SQL,JSON,Choice, Web, Realtime}; // we need custom handlers for all these.
 
@@ -14,7 +15,7 @@ public class DataSource
     public delegate void DataReadyHandler();
     public event DataReadyHandler onDataReady;
 
-    public Dictionary<string,Dictionary<string, object>> data; //(primaryKey,(obj[fieldname/fieldval])
+    public Dictionary<string,DataItem> data; //(primaryKey,(obj[fieldname/fieldval])
     public string name;
     public string primaryKey = "";
     public string displayCode = ""; // used for displaying an item with displayObj
@@ -39,7 +40,7 @@ public class DataSource
     {
         primaryKey = key;
         this.name = name;
-        data = new Dictionary<string, Dictionary<string, object>>();
+        data = new Dictionary<string, DataItem>();
         attributes = new DataLibrary(); 
     }
 
@@ -81,16 +82,11 @@ public class DataSource
 
     public void setField(string key, string fieldName,object value)
     {
-       bool found = data.TryGetValue(key, out Dictionary<string, object> obj);
+        //check if source is read only here.
+       bool found = data.TryGetValue(key, out DataItem obj);
        if (!found) { return; }
-       if(obj.ContainsKey(fieldName))
-        {
-            obj[fieldName] = value;
-        }
-       else
-        {
-            obj.Add(fieldName, value);
-        }
+       obj.SetValue(fieldName,value);
+
         fieldChanged.TryGetValue(key, out Action<string,object> callback);
         callback?.Invoke(fieldName,value);
     }
@@ -118,7 +114,8 @@ public class DataSource
     public IReadOnlyList<Dictionary<string, object>> GetAllSortedByField(string fieldName, bool descending = false)//ordered list. 
     {
         List<Dictionary<string, object>> sorted = new List<Dictionary<string, object>>();
-        sorted = data.Values.OrderBy(o => o[fieldName]).ToList();
+        //TODO fix sorting
+        //sorted = data.Values.OrderBy(o => o[fieldName]).ToList();
         return sorted;
     }
 
@@ -132,11 +129,10 @@ public class DataSource
     {
         if (dataReady)
         {
-            List<Dictionary<string, object>> vals = data.Values.ToList();
-            Dictionary<string, object> entry = vals[UnityEngine.Random.Range(0, vals.Count)];
+            List<DataItem> vals = data.Values.ToList();
+            DataItem entry = vals[UnityEngine.Random.Range(0, vals.Count)];
 
-            object val;
-            entry.TryGetValue(fieldName, out val);
+            object val = entry.GetValue(fieldName);
 
             return val.ToString() ?? "none";
         }
@@ -148,18 +144,19 @@ public class DataSource
 
     public virtual string getSelectedVal(string fieldName)
     {
-        Dictionary<string, object> entry = getSelected();
+        DataItem entry = getSelected();
         if(entry != null)
         {
-            if (entry.ContainsKey(fieldName))
+            object val = entry.GetValue(fieldName);
+            if (val!=null)
             {
-                return entry[fieldName].ToString();
+                return val.ToString();
             }
         }
         return "Not Found";
     }
 
-    public virtual Dictionary<string, object> getSelected()
+    public virtual DataItem getSelected()
     {
         if(selectedKey == "NA" && dataReady && data.Count > 0)
         {
@@ -167,7 +164,7 @@ public class DataSource
         }
         if (dataReady && data != null && data.ContainsKey(selectedKey))
         {
-            Dictionary<string, object> entry = data[selectedKey];
+            DataItem entry = data[selectedKey];
             return entry;
         }
         else
@@ -265,17 +262,12 @@ public class DataSource
     {
         if (data != null)
         {
+            //
             List<string> fields = new List<string>();
-            foreach (Dictionary<string, object> dict in data.Values)
+            foreach (DataItem item in data.Values)
             {
-                foreach (KeyValuePair<string, object> entry in dict)
-                {
-                    if (!fields.Contains(entry.Key))
-                    {
-                        fields.Add(entry.Key);
-                    }
-                    // do something with entry.Value or entry.Key
-                }
+                List<string> fieldList = item.GetFields();
+                fields = fields.Union(fieldList).ToList();
             }
             return fields;
         }
@@ -287,11 +279,10 @@ public class DataSource
         if (dataReady && data != null)
         {
             List<string> allVals = new List<string>();
-            foreach (Dictionary<string, object> dict in data.Values)
+            foreach (DataItem item in data.Values)
             {
-                object val = "none";
-                bool found = dict.TryGetValue(field, out val);
-                if(found)
+                object val = item.GetValue(field);
+                if(val!=null)
                 { allVals.Add(val.ToString()); }
                 else { Debug.LogError("DataSource-GetFieldFromAllItems failed: "+field+" not found." + name + "-" + GetHashCode());}
                 // do something with entry.Value or entry.Key
@@ -323,8 +314,9 @@ public class DataSource
                 if(field == primaryKey) { allVals.Add(entriesIndex[i]); }
                 else
                 {
-                    bool found = data[key].TryGetValue(field, out object value);
-                    allVals.Add(value?.ToString());
+                    object val = data[key].GetValue(field);
+                    if (val != null)
+                    { allVals.Add(val.ToString()); }
                 }
             }
             return allVals;
@@ -338,14 +330,10 @@ public class DataSource
         {
             Dictionary<string, string> allVals = new Dictionary<string, string>();
 
-
-
-            foreach (Dictionary<string, object> dict in data.Values)
+            foreach (DataItem item in data.Values)
             {
-                object val = "none";
-                object key = "none";
-                dict.TryGetValue(field, out val);
-                dict.TryGetValue(primaryKey, out key);
+                object val = item.GetValue(field) ?? "none";
+                object key = item.GetValue(primaryKey) ?? "none";
 
                 if (uniqueOnly && allVals.ContainsKey(val.ToString()))
                 {
@@ -381,12 +369,10 @@ public class DataSource
 
 
 
-            foreach (Dictionary<string, object> dict in data.Values)
+            foreach (DataItem item in data.Values)
             {
-                object val = "none";
-                object key = "none";
-                dict.TryGetValue(field, out val);
-                dict.TryGetValue(primaryKey, out key);
+                object val = item.GetValue(field) ?? "none";
+                object key = item.GetValue(primaryKey) ?? "none";
 
                 if (uniqueOnly && allVals.ContainsKey(val.ToString()))
                 {
@@ -427,34 +413,32 @@ public class DataSource
     {
         if (dataReady/* && id > 0 && id < data.Count*/)
         {
-            data.TryGetValue(id, out Dictionary<string, object> dict);
+            data.TryGetValue(id, out DataItem item);
 
-            object val;
-            dict.TryGetValue(field, out val);
+            object val = item.GetValue(field);
 
             return val ?? "none";
         }
         return "";
     }
 
-    public virtual Dictionary<string,object> getObjFromItemID(string id)
+    public virtual DataItem getObjFromItemID(string id)
     {
         if (dataReady/* && id > 0 && id < data.Count*/)
         {
-            data.TryGetValue(id, out Dictionary<string, object> dict);
-            if (dict == null) { dict = new Dictionary<string, object>(); }
-            return dict;
+            data.TryGetValue(id, out DataItem item);
+            if (item != null) { return item; }
         }
-        return new Dictionary<string, object>();
+        return new DataItem();
     }
 
     public virtual float GetMaxValueFromField(string field)
     {
         //TODO:store these values so it doesnt get them every time.
         float highestVal = 0;
-        foreach(Dictionary<string,object> entry in data.Values)
+        foreach(DataItem item in data.Values)
         {
-            entry.TryGetValue(field, out object fieldValue);
+            object fieldValue = item.GetValue(field);
             if(fieldValue == null) { continue; }
             float val = (float)Convert.ToDouble(fieldValue);
             if(val>highestVal)
@@ -465,26 +449,27 @@ public class DataSource
         return highestVal;
     }
 
-    public virtual Dictionary<string,object> getFieldObjsFromItemID(string id)
+    public virtual DataItem getFieldObjsFromItemID(string id)
     {
         if (dataReady)
         {
 
-            Dictionary<string, object> dict;
-            data.TryGetValue(id,out dict);
-            if (dict != null)
+            DataItem item;
+
+            data.TryGetValue(id,out item);
+            if (item != null)
             {
-                return dict;
+                return item;
             }
 
         }
-        return new Dictionary<string, object>();
+        return new DataItem();
     }
 
-    public virtual Dictionary<string, object> getFieldsFromItemID(string id)
+    public virtual DataItem getFieldsFromItemID(string id)
     {
-        data.TryGetValue(id, out Dictionary<string, object> fields);
-        return fields;
+        data.TryGetValue(id, out DataItem item);
+        return item;
     }
 
 }

@@ -23,6 +23,11 @@ public class GenericDataHandler : MonoBehaviour
         fields = data;
     }
 
+    public void setData(DataItem item)
+    {
+        fields = item.GetAllData();
+    }
+
 
     public string getData(string field)
     {
