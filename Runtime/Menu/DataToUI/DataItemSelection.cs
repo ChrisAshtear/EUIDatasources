@@ -9,5 +9,5 @@ public class DataItemSelection
     public string tableName;
     public string ID;
     public string itemUUID;
-    public DataSource source { get { return db.getTable(tableName); } }
+    public DataItem item { get { return db.getTable(tableName).getObjFromItemID(itemUUID); } }
 }
