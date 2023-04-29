@@ -7,10 +7,9 @@ using UnityEditor;
 using UnityEngine;
 
 #if UNITY_EDITOR
-[CustomPropertyDrawer(typeof(DataItemSelection))]
+[CustomPropertyDrawer(typeof(DataItemContent))]
 public class ItemSelectDrawer : PropertyDrawer
 {
-
     private float xOffset = 0;
     private float yHeight = 32;
     private float expandedHeight = 50;//extra space for event control +/- buttons
@@ -92,10 +91,11 @@ public class ItemSelectDrawer : PropertyDrawer
                     if(uuids.Length > 0) { property.FindPropertyRelative("itemUUID").stringValue = uuids[item_index]; }
                     
                 }
-                
+               
 
                 property.FindPropertyRelative("tableName").stringValue = tables[index];
                 property.FindPropertyRelative("ID").stringValue = obj.primaryKey;
+                
             }
             else
             {
@@ -105,7 +105,7 @@ public class ItemSelectDrawer : PropertyDrawer
 
         // Set indent back to what it was
         EditorGUI.indentLevel = indent;
-
+        
         EditorGUI.EndProperty();
     }
 

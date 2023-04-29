@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public delegate void UpdateData(Dictionary<string, object> data);
-
-[Serializable]
+//DataPointer for inspector, extends dataItem?
+[System.Serializable]
 public class DataItem
 {
     public string Name;
     public string Type;
+    [System.NonSerialized]
     Dictionary<string, object> vars = new Dictionary<string, object>();
 
     public DataItem(string name, string type, Dictionary<string, object> vars)
@@ -26,6 +27,10 @@ public class DataItem
         this.vars = new Dictionary<string, object>(vars);
     }
 
+    protected void SetVals(Dictionary<string, object> vars)
+    {
+        this.vars = new Dictionary<string, object>(vars);
+    }
     //have to have a new data item added to a callback list in a datasource.
 
     public Dictionary<string,object> GetAllData()
@@ -56,6 +61,50 @@ public class DataItem
             fields.Add(item.Key); 
         }
         return fields;
+    }
+}
+
+[System.Serializable]
+public class DataItemContent : DataItem, ISerializationCallbackReceiver
+{
+    [SerializeField] public DatabaseSource db;
+    [SerializeField] public string tableName;
+    [SerializeField] public string ID;
+    [SerializeField] public string itemUUID;
+
+    bool loaded = false;
+
+    DataItemContent(DatabaseSource db, string tableName, string iD, string itemUUID)
+    {
+        this.db = db;
+        this.tableName = tableName;
+        ID = iD;
+        this.itemUUID = itemUUID;
+        Load();
+        
+    }
+
+    public bool Load()
+    {
+        if (db == null) return false;
+        DataItem item = db.getTable(tableName).getObjFromItemID(itemUUID);
+        if (item == null) { return false; }
+        Name = item.Name;
+        Type = item.Type;
+        SetVals(item.GetAllData());
+        return true;
+    }
+
+    public void OnAfterDeserialize()
+    {
+        Load();
+        //throw new NotImplementedException();
+    }
+
+    public void OnBeforeSerialize()
+    {
+        //Load();
+        //throw new NotImplementedException();
     }
 }
 //alternately manually define vars in a seperate class for each table.
