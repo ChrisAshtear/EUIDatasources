@@ -25,7 +25,8 @@ public class UIButtonListItem : MonoBehaviour
 
     private void OnDestroy()
     {
-        source?.RemoveListener(dataKey, SourceUpdate);
+
+        //source?.RemoveListener(dataKey, SourceUpdate);
     }
 
     private void OnClick()
