@@ -15,4 +15,5 @@ public class UIDataTag : MonoBehaviour
     public string subTypeName;
     [Tooltip("For things like disable button if true, this would disable button if false")]
     public bool invert = false;
+    public string Tag;
 }
