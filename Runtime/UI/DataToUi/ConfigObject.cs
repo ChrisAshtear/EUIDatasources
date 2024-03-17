@@ -22,28 +22,14 @@ public class ConfigObject : INotifyPropertyChanged, INotifyCollectionChanged
 
     //protected IJsonData databank;
 
-    public delegate void OnBotComponentChange(GameObject newObj, GameObject oldObj, object wheelCfg);
-
-    public event OnBotComponentChange onCompTypeChange;
+    //example of a property declaration that notifies on change
+    //public GameObject NumberSign2 { get { return _teamNumPos2; } set { SetPropertyField(ref _teamNumPos2, value); } }
 
     public ConfigObject()
     {
         typeName = this.GetType().Name;
     }
 
-    public void AddChangeListener(OnBotComponentChange evt)
-    {
-        if(onCompTypeChange == null)
-        {
-            onCompTypeChange += evt;
-        }
-            
-    }
-
-    public void SetChanged(GameObject oldObj, GameObject newObj, ConfigObject conf)
-    {
-        onCompTypeChange.Invoke(oldObj, newObj, conf);
-    }
     protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
     {
         PropertyChangedEventHandler handler = PropertyChanged;

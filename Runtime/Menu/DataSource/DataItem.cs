@@ -42,7 +42,9 @@ public class DataItem
     public object GetValue(string varName)
     {
         bool exists = vars.ContainsKey(varName);
+        bool existsL = vars.ContainsKey(varName.ToLower());
         if (exists) { return vars[varName]; }
+        else if(existsL) { return vars[varName.ToLower()]; }
         else { return null; }
     }
 

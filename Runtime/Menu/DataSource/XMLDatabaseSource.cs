@@ -63,8 +63,9 @@ public class XMLDatabaseSource : DBLoader
                 else if (element.Parent.Name.ToString() == currentTable.name)//Entry
                 {
                     Dictionary<string, object> list = element.Attributes().ToDictionary(c => c.Name.LocalName, c => (object)c.Value);
+                    string primKey = list.Keys.Where((x) => (x.ToString() == primaryKey || x.ToString() == primaryKey.ToLower())).First();
                     DataItem item = new DataItem(element.Name.ToString(), element.Name.ToString(), list);
-                    currentTable.data.Add(list[primaryKey].ToString(), item);
+                    currentTable.data.Add(list[primKey].ToString(), item);
                 }
                 else if (element.HasAttributes)
                 {
@@ -95,7 +96,7 @@ public class XMLDatabaseSource : DBLoader
         {
             if (e.Message.Contains("dictionary"))
             {
-                loadStatus = "key not found";
+                loadStatus = $"key not found:{e.Message}";
             }
             else
             {
