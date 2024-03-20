@@ -41,6 +41,7 @@ public class DataItem
 
     public object GetValue(string varName)
     {
+        if(vars == null) { Debug.LogError($"data not defined:{varName}-{this.Name}"); return null; }
         bool exists = vars.ContainsKey(varName);
         bool existsL = vars.ContainsKey(varName.ToLower());
         if (exists) { return vars[varName]; }

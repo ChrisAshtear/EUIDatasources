@@ -17,6 +17,7 @@ using System.ComponentModel;
 public class UIBoundData : MonoBehaviour
 {
     System.Object data;
+    System.Object parentData;
 
     private static string[] deprecatedProps = { "audio", "rigidbody2D", "rigidbody", "particleSystem", "collider", "collider2D", "renderer", "constantForce", "light", "animation", "camera", "hingeJoint","networkView" };
 
@@ -26,12 +27,13 @@ public class UIBoundData : MonoBehaviour
     Dictionary<string,System.Object> dataList = new Dictionary<string, object>();
     Dictionary<string, PropertyInfo> props = new Dictionary<string, PropertyInfo>();
     
-    System.Object parentData;
+    
 
     static Dictionary<string, ValueChanger> dataTypeChangeHandlers = new Dictionary<string, ValueChanger>();
     static Dictionary<string, GetListData> dataListHandlers = new Dictionary<string, GetListData>();
 
     private UIDataTag[] tags;
+    private Dictionary<string, UnityAction<GameObject, System.Object>> updateCallbacksByField = new Dictionary<string, UnityAction<GameObject, System.Object>>();
 
     //check for other instances of uibounddata in children. then do not bind data.
     public bool checkForOtherBinds = false;
@@ -146,21 +148,6 @@ public class UIBoundData : MonoBehaviour
     {
         object data = parentData;
         if(this.parentDataRef != null) { data = this.parentDataRef; }
-        foreach (KeyValuePair<string, PropertyInfo> pair in props)
-        {
-            if (pair.Key == "Item")
-            {
-                continue;//Skipping data container in List.
-            }
-            if(dataList.ContainsKey(pair.Key.ToLower()))
-            {
-                dataList[pair.Key.ToLower()] = pair.Value.GetValue(data);
-            }
-            else
-            {
-                dataList.Add(pair.Key.ToLower(), pair.Value.GetValue(data));
-            }
-        }
 
         foreach (UIDataTag tag in tags)
         {
@@ -197,6 +184,16 @@ public class UIBoundData : MonoBehaviour
         TextMeshProUGUI text = obj.GetComponent<TextMeshProUGUI>();
         if (text != null)
         {
+            if (parentData is INotifyPropertyChanged)
+            {
+                INotifyPropertyChanged prop = (INotifyPropertyChanged)parentData;
+                prop.PropertyChanged += (x, y) =>
+                {
+                    object value = props[propkey].GetValue(parentData);
+                    dataList[tag] = value;
+                    text.text = dataList[tag].ToString();
+                };
+            }
             text.text = dataList[tag].ToString();
         }
 
@@ -336,11 +333,6 @@ public class UIBoundData : MonoBehaviour
                 });
             }
         }
-        /*UIBoundData childBoundData = obj.GetComponent<UIBoundData>();
-        if (childBoundData)
-        {
-            childBoundData.SetData(dataList[tag]);
-        }*/
 
         IDataReceiver[] receivers = obj.GetComponentsInChildren<IDataReceiver>();
         foreach(IDataReceiver receiver in receivers)
